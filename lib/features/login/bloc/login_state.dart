@@ -3,12 +3,16 @@ abstract class LoginState {
   LoginState(this.message);
 }
 
+class LoginInitial extends LoginState {
+  LoginInitial() : super('');
+}
+
 class LoginSuccess extends LoginState {
-  LoginSuccess(): super('');
+  LoginSuccess() : super('');
 }
 
 class LoginLoading extends LoginState {
-  LoginLoading(): super('');
+  LoginLoading() : super('');
 }
 
 class LoginFailed extends LoginState {
