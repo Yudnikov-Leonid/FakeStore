@@ -1,19 +1,19 @@
-import 'package:fake_store/features/login/bloc/login_bloc.dart';
-import 'package:fake_store/features/login/bloc/login_event.dart';
+import 'package:fake_store/features/login/preentation/bloc/login_bloc.dart';
+import 'package:fake_store/features/login/preentation/bloc/login_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginInputField extends StatelessWidget {
-  LoginInputField(
-      {required this.hint,
+  const LoginInputField(
+      {required this.controller,
+      required this.hint,
       required this.icon,
       this.error,
       required this.isEnabled,
       required this.isPassword,
       super.key});
 
-  final TextEditingController _controller = TextEditingController();
-
+  final TextEditingController controller;
   final String hint;
   final IconData icon;
   final String? error;
@@ -27,7 +27,7 @@ class LoginInputField extends StatelessWidget {
           color: Colors.grey.shade200,
           borderRadius: const BorderRadius.all(Radius.circular(16))),
       child: TextField(
-        controller: _controller,
+        controller: controller,
         decoration: InputDecoration(
             hintText: hint,
             prefixIcon: Icon(icon),

@@ -1,7 +1,12 @@
-import 'package:fake_store/features/login/pages/login_page.dart';
+import 'package:fake_store/features/login/preentation/pages/login_page.dart';
+import 'package:fake_store/sl.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  initializeDependencies();
+  await Firebase.initializeApp();
   runApp(const MainApp());
 }
 
@@ -10,7 +15,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: LoginPage(),
     );

@@ -1,35 +1,43 @@
-import 'package:fake_store/features/login/bloc/login_bloc.dart';
-import 'package:fake_store/features/login/bloc/login_state.dart';
-import 'package:fake_store/features/login/widgets/input_field.dart';
+import 'package:fake_store/features/login/preentation/bloc/login_bloc.dart';
+import 'package:fake_store/features/login/preentation/bloc/login_event.dart';
+import 'package:fake_store/features/login/preentation/bloc/login_state.dart';
+import 'package:fake_store/features/login/preentation/widgets/input_field.dart';
+import 'package:fake_store/sl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+
+  final _loginController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LoginBloc>(
-      create: (context) => LoginBloc(),
-      child: BlocBuilder(builder: (context, state) {
+      create: (_) => sl(),
+      child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
         if (state is LoginSuccess) {
-          
+          return const Text('success');
+        } else if (state is LoginInitial) {
+          return _buildBody(context, null, null, null, false);
         } else if (state is LoginEmailError) {
-          return _buildBody(state.message, null, null, false);
+          return _buildBody(context, state.message, null, null, false);
         } else if (state is LoginPasswordError) {
-          return _buildBody(null, state.message, null, false);
+          return _buildBody(context, null, state.message, null, false);
         } else if (state is LoginFailed) {
-          return _buildBody(null, null, state.message, false);
+          return _buildBody(context, null, null, state.message, false);
         } else if (state is LoginLoading) {
-          return _buildBody(null, null, null, true);
+          return _buildBody(context, null, null, null, true);
         } else {
-          throw Exception('Unknown state');
+          throw Exception('Unknown state: $state');
         }
       }),
     );
   }
 
-  Widget _buildBody(String? loginError, String? passwordError, String? error, bool isProgress) {
+  Widget _buildBody(BuildContext context, String? loginError,
+      String? passwordError, String? error, bool isProgress) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Fake store'),
@@ -53,6 +61,7 @@ class LoginPage extends StatelessWidget {
               height: 20,
             ),
             LoginInputField(
+                controller: _loginController,
                 hint: 'Email',
                 icon: Icons.email,
                 error: loginError,
@@ -62,6 +71,7 @@ class LoginPage extends StatelessWidget {
               height: 20,
             ),
             LoginInputField(
+                controller: _passwordController,
                 hint: 'Password',
                 icon: Icons.security,
                 error: passwordError,
@@ -75,7 +85,7 @@ class LoginPage extends StatelessWidget {
                 : Center(
                     child: Text(
                       error,
-                      style: TextStyle(color: Colors.red),
+                      style: const TextStyle(color: Colors.red),
                     ),
                   ),
             const SizedBox(
@@ -83,7 +93,11 @@ class LoginPage extends StatelessWidget {
             ),
             Center(
               child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    final bloc = context.read<LoginBloc>();
+                    bloc.add(LoginLoginEvent(
+                        _loginController.text, _passwordController.text));
+                  },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       minimumSize: const Size(200, 50)),
