@@ -13,3 +13,5 @@ class LoginSignUpEvent extends LoginEvent {
 }
 
 class LoginHideErrorsEvent extends LoginEvent {}
+
+class LoginLogOutEvent extends LoginEvent {}

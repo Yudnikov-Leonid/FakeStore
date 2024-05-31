@@ -1,23 +1,34 @@
 import 'package:fake_store/features/cart/presentation/pages/cart_page.dart';
 import 'package:fake_store/features/favorites/presentation/favorite_page.dart';
 import 'package:fake_store/features/list/presentation/pages/list_page.dart';
+import 'package:fake_store/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class StoreNavigator extends StatefulWidget {
   const StoreNavigator({super.key});
 
   @override
-  State<StoreNavigator> createState() => _StoreNavigatorState();
+  State<StoreNavigator> createState() => StoreNavigatorState();
 }
 
-class _StoreNavigatorState extends State<StoreNavigator> {
+class StoreNavigatorState extends State<StoreNavigator> {
   int _index = 0;
   List<Widget> body = const [
     ListPage(),
     FavoritePage(),
     CartPage(),
-    Text('4'),
+    ProfilePage()
   ];
+
+  static StoreNavigatorState? of(BuildContext context) {
+    return context.findAncestorStateOfType();
+  }
+
+  void moveTo(int index) {
+    setState(() {
+      _index = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
