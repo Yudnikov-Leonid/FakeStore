@@ -1,5 +1,8 @@
+import 'package:fake_store/features/details/domain/entity/review.dart';
+import 'package:fake_store/features/details/presentation/widgets/review_widget.dart';
 import 'package:fake_store/features/list/domain/entity/store_item.dart';
 import 'package:fake_store/features/list/presentation/widgets/favorite_button.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class DetailsPage extends StatefulWidget {
@@ -32,7 +35,10 @@ class _DetailsPageState extends State<DetailsPage> {
                       style: const TextStyle(
                           fontSize: 22, fontWeight: FontWeight.bold),
                     ),
-                    FavoriteButton(widget._item, doRebuild: true,)
+                    FavoriteButton(
+                      widget._item,
+                      doRebuild: true,
+                    )
                   ],
                 ),
                 Container(
@@ -95,26 +101,60 @@ class _DetailsPageState extends State<DetailsPage> {
                   style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 60,
                 ),
-                ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey.shade300,
-                        fixedSize: const Size(500, 80),
-                        padding: EdgeInsets.all(10)),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                FutureBuilder(
+                    future: _getReviews(widget._item.id),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return Column(
                           children: [
-                            const Icon(Icons.star, color: Colors.amber,),
-                            Text(widget._item.rating.toString())
+                            Container(
+                              height: 60,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey.shade300,
+                                  borderRadius: BorderRadius.circular(16)),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.star,
+                                        color: Colors.amber,
+                                      ),
+                                      Text(widget._item.rating.toString())
+                                    ],
+                                  ),
+                                  Text(
+                                    snapshot.data!.length == 1
+                                        ? '${snapshot.data!.length} review'
+                                        : '${snapshot.data!.length} reviews',
+                                    style: const TextStyle(color: Colors.grey),
+                                  )
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: snapshot.data!.length,
+                                itemBuilder: (context, index) {
+                                  return ReviewWidget(snapshot.data![index]);
+                                }),
                           ],
-                        ),
-                        const Text('55 reviews', style: TextStyle(color: Colors.grey),)
-                      ],
-                    )),
+                        );
+                      }
+                    }),
                 const SizedBox(
                   height: 60,
                 ),
@@ -124,5 +164,16 @@ class _DetailsPageState extends State<DetailsPage> {
         ),
       ),
     );
+  }
+
+  Future<List<ReviewItem>> _getReviews(int itemId) async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref().child('reviews');
+    final data = await ref.get();
+    if (data.exists) {
+      final list = data.children.map((sn) => ReviewItem.fromDataSnapshot(sn));
+      return list.where((e) => e.itemId == itemId).toList();
+    } else {
+      return [];
+    }
   }
 }
