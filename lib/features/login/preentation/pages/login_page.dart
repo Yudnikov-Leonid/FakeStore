@@ -2,6 +2,7 @@ import 'package:fake_store/features/login/preentation/bloc/login_bloc.dart';
 import 'package:fake_store/features/login/preentation/bloc/login_event.dart';
 import 'package:fake_store/features/login/preentation/bloc/login_state.dart';
 import 'package:fake_store/features/login/preentation/widgets/input_field.dart';
+import 'package:fake_store/features/navigator/navigator.dart';
 import 'package:fake_store/sl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +19,7 @@ class LoginPage extends StatelessWidget {
       create: (_) => sl(),
       child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
         if (state is LoginSuccess) {
-          return const Text('success');
+          return StoreNavigator();
         } else if (state is LoginInitial) {
           return _buildBody(context, null, null, null, false);
         } else if (state is LoginEmailError) {

@@ -1,4 +1,3 @@
-import 'package:fake_store/core/data_state.dart';
 import 'package:fake_store/core/presentation/ui_validator.dart';
 import 'package:fake_store/core/presentation/validation_exceptions.dart';
 import 'package:fake_store/core/usecase.dart';
