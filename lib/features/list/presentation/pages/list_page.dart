@@ -12,12 +12,12 @@ class ListPage extends StatelessWidget {
     DatabaseReference ref = FirebaseDatabase.instance.ref().child('items');
     return SafeArea(
         child: Padding(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const TextField(
-            decoration: InputDecoration(hintText: 'Search') ,
+            decoration: InputDecoration(hintText: 'Search'),
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
           const SizedBox(
@@ -31,16 +31,7 @@ class ListPage extends StatelessWidget {
                 child: CircularProgressIndicator(),
               ),
               itemBuilder: (context, snapshot, index, animation) {
-                print(123);
-                final item = StoreItem(
-                    title:  snapshot.child('title').value.toString(),
-                    description:  snapshot.child('description').value.toString(),
-                    rating:  double.parse(snapshot.child('rating').value.toString()),
-                    imageUrl:  snapshot.child('imageUrl').value.toString(),
-                    price: int.parse(snapshot.child('price').value.toString()),
-                    oldPrice: int.parse(snapshot.child('oldPrice').value.toString()),
-                    );
-                return StoreItemWidget(item);
+                return StoreItemWidget(StoreItem.fromSnapshot(snapshot));
               },
             ),
           )

@@ -1,4 +1,3 @@
-import 'package:fake_store/core/data_state.dart';
 import 'package:fake_store/features/login/domain/entity/login_result.dart';
 import 'package:fake_store/features/login/domain/repository/login_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
