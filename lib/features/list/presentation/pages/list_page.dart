@@ -1,5 +1,6 @@
 import 'package:fake_store/features/list/domain/entity/store_item.dart';
-import 'package:fake_store/features/list/presentation/widgets/store_item.dart';
+import 'package:fake_store/features/list/presentation/widgets/store_item_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
@@ -31,12 +32,30 @@ class ListPage extends StatelessWidget {
                 child: CircularProgressIndicator(),
               ),
               itemBuilder: (context, snapshot, index, animation) {
-                return StoreItemWidget(StoreItem.fromSnapshot(snapshot));
+                return FutureBuilder(
+                    future: _isFavorite(
+                        int.parse(snapshot.child('id').value.toString())),
+                    builder: (context, isFavorite) {
+                      if (isFavorite.hasData) {
+                        return StoreItemWidget(
+                            StoreItem.fromSnapshot(snapshot, isFavorite.data!));
+                      } else {
+                        return const SizedBox();
+                      }
+                    });
               },
             ),
           )
         ],
       ),
     ));
+  }
+
+  Future<bool> _isFavorite(int id) async {
+    DatabaseReference ref = FirebaseDatabase.instance
+        .ref()
+        .child('favorites/${FirebaseAuth.instance.currentUser!.uid}${id}');
+    final data = await ref.once();
+    return data.snapshot.exists;
   }
 }

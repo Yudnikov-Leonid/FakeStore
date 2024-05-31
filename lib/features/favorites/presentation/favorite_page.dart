@@ -1,5 +1,5 @@
 import 'package:fake_store/features/list/domain/entity/store_item.dart';
-import 'package:fake_store/features/list/presentation/widgets/store_item.dart';
+import 'package:fake_store/features/list/presentation/widgets/store_item_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
@@ -15,10 +15,7 @@ class FavoritePage extends StatefulWidget {
 class _FavoritePageState extends State<FavoritePage> {
   @override
   Widget build(BuildContext context) {
-    DatabaseReference ref = FirebaseDatabase.instance
-        .ref()
-        .child('favorites')
-        .ref;
+    DatabaseReference ref = FirebaseDatabase.instance.ref().child('favorites');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: SafeArea(
@@ -30,7 +27,6 @@ class _FavoritePageState extends State<FavoritePage> {
             return const SizedBox();
           }
           final id = int.parse(snapshot.child('id').value.toString());
-          print('id: $id');
           return FutureBuilder(
               future: _getItem(id),
               builder: (context, snapshot) {
@@ -45,14 +41,19 @@ class _FavoritePageState extends State<FavoritePage> {
     );
   }
 
+  final Map<int, StoreItem> _cache = {};
+
   Future<StoreItem> _getItem(int id) async {
-    DatabaseReference ref = FirebaseDatabase.instance
-        .ref()
-        .child('items')
-        .orderByChild('id')
-        .equalTo(id)
-        .ref;
-    final snapshot = await ref.get();
-    return StoreItem.fromSnapshot(snapshot.children.first);
+    if (!_cache.containsKey(id)) {
+      _cache.clear();
+      DatabaseReference ref =
+          FirebaseDatabase.instance.ref().child('items').ref;
+      final snapshot = await ref.get();
+      snapshot.children.forEach((e) {
+        _cache[int.parse(e.child('id').value.toString())] =
+            StoreItem.fromSnapshot(e, true);
+      });
+    }
+    return _cache[id]!;
   }
 }

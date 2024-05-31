@@ -1,13 +1,23 @@
 import 'package:fake_store/features/list/domain/entity/store_item.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class StoreItemWidget extends StatelessWidget {
+class StoreItemWidget extends StatefulWidget {
   const StoreItemWidget(this._item, {super.key});
 
   final StoreItem _item;
 
   @override
+  State<StoreItemWidget> createState() => _StoreItemWidgetState();
+}
+
+class _StoreItemWidgetState extends State<StoreItemWidget> {
+  late bool _isFavorite = widget._item.isFavorite;
+
+  @override
   Widget build(BuildContext context) {
+    DatabaseReference ref = FirebaseDatabase.instance.ref().child('favorites');
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -15,22 +25,24 @@ class StoreItemWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(_item.imageUrl),
+          Image.network(widget._item.imageUrl),
           const SizedBox(
             height: 5,
           ),
           Row(
             children: [
               Text(
-                _item.price.toString(),
+                '${widget._item.price.toString()}P',
                 style: const TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
                     fontSize: 20),
               ),
-              const SizedBox(width: 10,),
+              const SizedBox(
+                width: 10,
+              ),
               Text(
-                _item.oldPrice.toString(),
+                '${widget._item.oldPrice.toString()}P',
                 style: const TextStyle(
                     color: Colors.grey,
                     fontWeight: FontWeight.bold,
@@ -43,7 +55,7 @@ class StoreItemWidget extends StatelessWidget {
                 width: 10,
               ),
               Text(
-                "-${((_item.oldPrice - _item.price) / _item.oldPrice * 100).round()}%",
+                "-${((widget._item.oldPrice - widget._item.price) / widget._item.oldPrice * 100).round()}%",
                 style: const TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
@@ -55,22 +67,43 @@ class StoreItemWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  _item.title,
+                  widget._item.title,
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.w400),
                 ),
               ),
-              Text(_item.rating.toString()),
+              Text(widget._item.rating.toString()),
               const Icon(
                 Icons.star,
                 size: 18,
               ),
               IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.favorite_outline))
+                  onPressed: () async {
+                    if (_isFavorite) {
+                      await ref
+                          .child(
+                              '${FirebaseAuth.instance.currentUser!.uid}${widget._item.id}')
+                          .remove();
+                    } else {
+                      await ref
+                          .child(
+                              '${FirebaseAuth.instance.currentUser!.uid}${widget._item.id}')
+                          .set({
+                        'userId': FirebaseAuth.instance.currentUser!.uid,
+                        'id': widget._item.id
+                      });
+                    }
+                    setState(() {
+                      _isFavorite = !_isFavorite;
+                    });
+                  },
+                  icon: Icon(_isFavorite
+                      ? Icons.favorite
+                      : Icons.favorite_outline))
             ],
           ),
           Text(
-            _item.description,
+            widget._item.description,
             style: const TextStyle(fontSize: 14, color: Colors.black54),
           )
         ],
