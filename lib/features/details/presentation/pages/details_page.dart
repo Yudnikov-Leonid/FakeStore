@@ -47,7 +47,7 @@ class DetailsPageState extends State<DetailsPage> {
                   height: 60,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(16)),
                   child: Row(
                     children: [
@@ -119,7 +119,7 @@ class DetailsPageState extends State<DetailsPage> {
                               height: 60,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
+                                  color: Colors.grey.shade100,
                                   borderRadius: BorderRadius.circular(16)),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,

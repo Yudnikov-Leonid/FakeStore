@@ -1,3 +1,4 @@
+import 'package:fake_store/features/cart/presentation/pages/cart_page.dart';
 import 'package:fake_store/features/favorites/presentation/favorite_page.dart';
 import 'package:fake_store/features/list/presentation/pages/list_page.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class _StoreNavigatorState extends State<StoreNavigator> {
   List<Widget> body = const [
     ListPage(),
     FavoritePage(),
-    Text('3'),
+    CartPage(),
     Text('4'),
   ];
 
