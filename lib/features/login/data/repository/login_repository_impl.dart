@@ -26,4 +26,10 @@ class LoginRepositoryImpl implements LoginRepository {
       return LoginFail(e.toString());
     }
   }
+  
+  @override
+  Future<void> logOut() async {
+    final auth = FirebaseAuth.instance;
+    auth.signOut();
+  }
 }
