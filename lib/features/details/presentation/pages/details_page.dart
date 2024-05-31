@@ -1,7 +1,9 @@
 import 'package:fake_store/features/details/domain/entity/review.dart';
+import 'package:fake_store/features/details/presentation/widgets/review_field.dart';
 import 'package:fake_store/features/details/presentation/widgets/review_widget.dart';
 import 'package:fake_store/features/list/domain/entity/store_item.dart';
 import 'package:fake_store/features/list/presentation/widgets/favorite_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -11,10 +13,10 @@ class DetailsPage extends StatefulWidget {
   final StoreItem _item;
 
   @override
-  State<DetailsPage> createState() => _DetailsPageState();
+  State<DetailsPage> createState() => DetailsPageState();
 }
 
-class _DetailsPageState extends State<DetailsPage> {
+class DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,13 +131,13 @@ class _DetailsPageState extends State<DetailsPage> {
                                         Icons.star,
                                         color: Colors.amber,
                                       ),
-                                      Text(widget._item.rating.toString())
+                                      Text(snapshot.data!.$3.toString())
                                     ],
                                   ),
                                   Text(
-                                    snapshot.data!.length == 1
-                                        ? '${snapshot.data!.length} review'
-                                        : '${snapshot.data!.length} reviews',
+                                    snapshot.data!.$1.length == 1
+                                        ? '${snapshot.data!.$1.length} review'
+                                        : '${snapshot.data!.$1.length} reviews',
                                     style: const TextStyle(color: Colors.grey),
                                   )
                                 ],
@@ -144,19 +146,32 @@ class _DetailsPageState extends State<DetailsPage> {
                             const SizedBox(
                               height: 20,
                             ),
+                            snapshot.data!.$2
+                                ? const SizedBox(
+                                    child:
+                                        Text('You have already left a review'),
+                                  )
+                                : ReviewField(widget._item,
+                                    ratings: snapshot.data!.$1
+                                        .map((e) => e.rating)
+                                        .toList()),
+                            const SizedBox(
+                              height: 20,
+                            ),
                             ListView.builder(
+                                reverse: true,
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: snapshot.data!.length,
+                                itemCount: snapshot.data!.$1.length,
                                 itemBuilder: (context, index) {
-                                  return ReviewWidget(snapshot.data![index]);
+                                  return ReviewWidget(snapshot.data!.$1[index]);
                                 }),
                           ],
                         );
                       }
                     }),
                 const SizedBox(
-                  height: 60,
+                  height: 10,
                 ),
               ],
             ),
@@ -166,14 +181,34 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-  Future<List<ReviewItem>> _getReviews(int itemId) async {
+  Future<double> _getRating(int itemId) async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref().child('items');
+    final data = await ref.get();
+    return double.parse(data.children
+        .where((sn) => int.parse(sn.child('id').value.toString()) == itemId)
+        .first
+        .child('rating')
+        .value
+        .toString());
+  }
+
+  Future<(List<ReviewItem>, bool, double)> _getReviews(int itemId) async {
     DatabaseReference ref = FirebaseDatabase.instance.ref().child('reviews');
     final data = await ref.get();
+    bool isMy = false;
+    final rating = await _getRating(itemId);
     if (data.exists) {
-      final list = data.children.map((sn) => ReviewItem.fromDataSnapshot(sn));
-      return list.where((e) => e.itemId == itemId).toList();
+      final list = data.children.map((sn) {
+        if (sn.child('userId').value.toString() ==
+                FirebaseAuth.instance.currentUser!.uid &&
+            int.parse(sn.child('itemId').value.toString()) == itemId) {
+          isMy = true;
+        }
+        return ReviewItem.fromDataSnapshot(sn);
+      });
+      return (list.where((e) => e.itemId == itemId).toList(), isMy, rating);
     } else {
-      return [];
+      return (<ReviewItem>[], false, 0.0);
     }
   }
 }
