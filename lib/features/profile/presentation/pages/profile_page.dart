@@ -28,10 +28,7 @@ class ProfilePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                      FirebaseAuth.instance.currentUser!.displayName?.isEmpty ??
-                              true
-                          ? 'Unknown'
-                          : FirebaseAuth.instance.currentUser!.displayName!),
+                      FirebaseAuth.instance.currentUser!.email!),
                   TextButton(
                       onPressed: () {
                         context.read<LoginBloc>().add(LoginLogOutEvent());

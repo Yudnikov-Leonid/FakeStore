@@ -29,23 +29,14 @@ class ListPageState extends State<ListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const TextField(
-            decoration: InputDecoration(hintText: 'Search'),
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Expanded(child: _list())
-        ],
-      ),
-    ));
+    return Scaffold(
+      appBar: AppBar(title: const Text('Fake store'),),
+      body: SafeArea(
+          child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: _list()
+      )),
+    );
   }
 
   FirebaseAnimatedList _list() {

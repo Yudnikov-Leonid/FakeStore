@@ -47,7 +47,7 @@ class StoreNavigatorState extends State<StoreNavigator> {
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Store'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Store'),
           BottomNavigationBarItem(
               icon: Icon(Icons.favorite_border), label: 'Favorites'),
           BottomNavigationBarItem(
