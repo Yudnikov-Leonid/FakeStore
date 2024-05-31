@@ -2,16 +2,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class AddToCartWidget extends StatefulWidget {
-  const AddToCartWidget(this._itemId, {super.key});
+class AddToCartButton extends StatefulWidget {
+  const AddToCartButton(this._itemId, {super.key});
 
   final int _itemId;
 
   @override
-  State<AddToCartWidget> createState() => _AddToCartWidgetState();
+  State<AddToCartButton> createState() => _AddToCartButtonState();
 }
 
-class _AddToCartWidgetState extends State<AddToCartWidget> {
+class _AddToCartButtonState extends State<AddToCartButton> {
   late int count;
 
   @override

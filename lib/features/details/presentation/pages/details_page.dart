@@ -1,5 +1,5 @@
 import 'package:fake_store/features/details/domain/entity/review.dart';
-import 'package:fake_store/features/details/presentation/widgets/add_to_cart.dart';
+import 'package:fake_store/features/details/presentation/widgets/add_to_cart_button.dart';
 import 'package:fake_store/features/details/presentation/widgets/review_field.dart';
 import 'package:fake_store/features/details/presentation/widgets/review_widget.dart';
 import 'package:fake_store/features/list/domain/entity/store_item.dart';
@@ -87,7 +87,7 @@ class DetailsPageState extends State<DetailsPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                AddToCartWidget(widget._item.id),
+                AddToCartButton(widget._item.id),
                 const SizedBox(
                   height: 60,
                 ),

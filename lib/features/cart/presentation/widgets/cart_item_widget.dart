@@ -1,3 +1,4 @@
+import 'package:fake_store/features/cart/presentation/pages/cart_page.dart';
 import 'package:fake_store/features/list/domain/entity/store_item.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -101,9 +102,11 @@ class _CartWidgetState extends State<CartWidget> {
                       await _remove(widget._item.id);
                     } else {
                       await _changeCount(widget.count - 1, widget._item.id);
-                      ;
                     }
                     setState(() {});
+                    context
+                        .findAncestorStateOfType<CartPageState>()
+                        ?.setState(() {});
                   },
                   child: const Icon(
                     Icons.remove,
@@ -139,8 +142,11 @@ class _CartWidgetState extends State<CartWidget> {
                 child: GestureDetector(
                   onTap: () async {
                     await _changeCount(widget.count + 1, widget._item.id);
-                    ;
                     setState(() {});
+                    context
+                        .findAncestorStateOfType<CartPageState>()
+                        ?.setState(() {});
+                    ;
                   },
                   child: const Icon(
                     Icons.add,
@@ -149,7 +155,7 @@ class _CartWidgetState extends State<CartWidget> {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
