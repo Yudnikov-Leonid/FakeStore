@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1063775290028",
+    "firebase_url": "https://fakestore-64242-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "fakestore-64242",
     "storage_bucket": "fakestore-64242.appspot.com"
   },

@@ -11,41 +11,46 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final SignUpUseCase signUpUseCase;
 
   LoginBloc({required this.loginUseCase, required this.signUpUseCase})
-      : super(FirebaseAuth.instance.currentUser == null ? LoginInitial() : LoginSuccess()) {
+      : super(FirebaseAuth.instance.currentUser == null
+            ? LoginInitial()
+            : LoginSuccess()) {
     on<LoginLoginEvent>(_onLoginLoginEvent);
     on<LoginSignUpEvent>(_onLoginSignUpEvent);
     on<LoginHideErrorsEvent>(_onHideErrorsEvent);
   }
 
-  void _onHideErrorsEvent(LoginHideErrorsEvent event, Emitter<LoginState> emit) {
+  void _onHideErrorsEvent(
+      LoginHideErrorsEvent event, Emitter<LoginState> emit) {
     emit(LoginInitial());
   }
 
   void _onLoginSignUpEvent(
       LoginSignUpEvent event, Emitter<LoginState> emit) async {
+    emit(LoginLoading());
     final result = await signUpUseCase(params: (event.login, event.password));
-      if (result is LoginSuccessResult) {
-        emit(LoginSuccess());
-      } else if (result is LoginLoginFail) {
-        emit(LoginEmailError(result.message));
-      } else if (result is LoginPasswordFail) {
-        emit(LoginPasswordError(result.message));
-      } else {
-        emit(LoginFailed(result.message));
-      }
+    if (result is LoginSuccessResult) {
+      emit(LoginSuccess());
+    } else if (result is LoginLoginFail) {
+      emit(LoginEmailError(result.message));
+    } else if (result is LoginPasswordFail) {
+      emit(LoginPasswordError(result.message));
+    } else {
+      emit(LoginFailed(result.message));
     }
+  }
 
   void _onLoginLoginEvent(
       LoginLoginEvent event, Emitter<LoginState> emit) async {
+    emit(LoginLoading());
     final result = await loginUseCase(params: (event.login, event.password));
     if (result is LoginSuccessResult) {
-        emit(LoginSuccess());
-      } else if (result is LoginLoginFail) {
-        emit(LoginEmailError(result.message));
-      } else if (result is LoginPasswordFail) {
-        emit(LoginPasswordError(result.message));
-      } else {
-        emit(LoginFailed(result.message));
-      }
+      emit(LoginSuccess());
+    } else if (result is LoginLoginFail) {
+      emit(LoginEmailError(result.message));
+    } else if (result is LoginPasswordFail) {
+      emit(LoginPasswordError(result.message));
+    } else {
+      emit(LoginFailed(result.message));
+    }
   }
 }
