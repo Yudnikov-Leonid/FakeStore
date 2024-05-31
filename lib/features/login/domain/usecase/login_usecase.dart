@@ -16,7 +16,7 @@ class LoginUseCase
     try {
       _loginValidator.isValid(params!.$1);
       _passwordValidator.isValid(params.$2);
-      return _repository.signIn(params!.$1, params.$2);
+      return _repository.login(params.$1, params.$2);
     } on LoginValidateException catch (e) {
       return LoginLoginFail(e.message);
     } on PasswordValidateException catch (e) {

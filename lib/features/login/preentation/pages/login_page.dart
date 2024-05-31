@@ -19,7 +19,7 @@ class LoginPage extends StatelessWidget {
       create: (_) => sl(),
       child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
         if (state is LoginSuccess) {
-          return StoreNavigator();
+          return const StoreNavigator();
         } else if (state is LoginInitial) {
           return _buildBody(context, null, null, null, false);
         } else if (state is LoginEmailError) {
@@ -110,6 +110,22 @@ class LoginPage extends StatelessWidget {
             ),
             const SizedBox(
               height: 20,
+            ),
+            Center(
+              child: OutlinedButton(
+                  onPressed: () {
+                    final bloc = context.read<LoginBloc>();
+                    bloc.add(LoginSignUpEvent(
+                        _loginController.text, _passwordController.text));
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Colors.transparent),
+                      minimumSize: const Size(200, 50)),
+                  child: const Text(
+                    'Sign up',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black),
+                  )),
             ),
             Center(
               child: SizedBox(

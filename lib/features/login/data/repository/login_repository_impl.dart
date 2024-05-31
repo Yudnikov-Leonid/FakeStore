@@ -16,7 +16,7 @@ class LoginRepositoryImpl implements LoginRepository {
   }
 
   @override
-  Future<LoginResult> signIn(String login, String password) async {
+  Future<LoginResult> signUp(String login, String password) async {
     try {
       final auth = FirebaseAuth.instance;
       await auth.createUserWithEmailAndPassword(
