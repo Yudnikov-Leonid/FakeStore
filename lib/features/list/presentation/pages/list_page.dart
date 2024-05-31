@@ -16,25 +16,30 @@ class ListPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Fake store',
+          const TextField(
+            decoration: InputDecoration(hintText: 'Search') ,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
           const SizedBox(
-            height: 20,
+            height: 10,
           ),
           Expanded(
             child: FirebaseAnimatedList(
               query: ref,
+              reverse: true,
               defaultChild: const Center(
                 child: CircularProgressIndicator(),
               ),
               itemBuilder: (context, snapshot, index, animation) {
                 print(123);
                 final item = StoreItem(
-                    snapshot.child('title').value.toString(),
-                    snapshot.child('description').value.toString(),
-                    snapshot.child('imageUrl').value.toString());
+                    title:  snapshot.child('title').value.toString(),
+                    description:  snapshot.child('description').value.toString(),
+                    rating:  double.parse(snapshot.child('rating').value.toString()),
+                    imageUrl:  snapshot.child('imageUrl').value.toString(),
+                    price: int.parse(snapshot.child('price').value.toString()),
+                    oldPrice: int.parse(snapshot.child('oldPrice').value.toString()),
+                    );
                 return StoreItemWidget(item);
               },
             ),
