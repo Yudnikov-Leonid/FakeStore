@@ -1,4 +1,5 @@
 import 'package:fake_store/features/details/domain/entity/review.dart';
+import 'package:fake_store/features/details/presentation/widgets/add_to_cart.dart';
 import 'package:fake_store/features/details/presentation/widgets/review_field.dart';
 import 'package:fake_store/features/details/presentation/widgets/review_widget.dart';
 import 'package:fake_store/features/list/domain/entity/store_item.dart';
@@ -86,15 +87,7 @@ class DetailsPageState extends State<DetailsPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        fixedSize: const Size(500, 50)),
-                    child: const Text(
-                      'Add to cart',
-                      style: TextStyle(color: Colors.white),
-                    )),
+                AddToCartWidget(widget._item.id),
                 const SizedBox(
                   height: 60,
                 ),
