@@ -1,7 +1,7 @@
 import 'package:fake_store/features/details/presentation/pages/details_page.dart';
 import 'package:fake_store/features/list/domain/entity/store_item.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:fake_store/features/list/presentation/pages/list_page.dart';
+import 'package:fake_store/features/list/presentation/widgets/favorite_button.dart';
 import 'package:flutter/material.dart';
 
 class StoreItemWidget extends StatefulWidget {
@@ -14,18 +14,20 @@ class StoreItemWidget extends StatefulWidget {
 }
 
 class _StoreItemWidgetState extends State<StoreItemWidget> {
-  late bool _isFavorite = widget._item.isFavorite;
-
   @override
   Widget build(BuildContext context) {
-    DatabaseReference ref = FirebaseDatabase.instance.ref().child('favorites');
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => DetailsPage(widget._item)));
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (context) => DetailsPage(widget._item)))
+            .whenComplete(() {
+          ListPage.of(context)?.rebuild(true);
+        });
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(32)),
         child: Column(
@@ -82,33 +84,15 @@ class _StoreItemWidgetState extends State<StoreItemWidget> {
                 const Icon(
                   Icons.star,
                   size: 18,
+                  color: Colors.amber,
                 ),
-                IconButton(
-                    onPressed: () async {
-                      if (_isFavorite) {
-                        await ref
-                            .child(
-                                '${FirebaseAuth.instance.currentUser!.uid}${widget._item.id}')
-                            .remove();
-                      } else {
-                        await ref
-                            .child(
-                                '${FirebaseAuth.instance.currentUser!.uid}${widget._item.id}')
-                            .set({
-                          'userId': FirebaseAuth.instance.currentUser!.uid,
-                          'id': widget._item.id
-                        });
-                      }
-                      setState(() {
-                        _isFavorite = !_isFavorite;
-                      });
-                    },
-                    icon: Icon(
-                        _isFavorite ? Icons.favorite : Icons.favorite_outline))
+                FavoriteButton(widget._item, doRebuild: false,)
               ],
             ),
             Text(
               widget._item.description,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 14, color: Colors.black54),
             )
           ],

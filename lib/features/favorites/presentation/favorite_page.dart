@@ -13,31 +13,36 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
+
   @override
   Widget build(BuildContext context) {
     DatabaseReference ref = FirebaseDatabase.instance.ref().child('favorites');
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: SafeArea(
-          child: FirebaseAnimatedList(
-        query: ref,
-        itemBuilder: (context, snapshot, animation, index) {
-          final userId = snapshot.child('userId').value.toString();
-          if (userId != FirebaseAuth.instance.currentUser!.uid) {
-            return const SizedBox();
-          }
-          final id = int.parse(snapshot.child('id').value.toString());
-          return FutureBuilder(
-              future: _getItem(id),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return StoreItemWidget(snapshot.data!);
-                } else {
-                  return const SizedBox();
-                }
-              });
-        },
-      )),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Favorites'),),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: SafeArea(
+            child: FirebaseAnimatedList(
+              defaultChild: const Center(child: CircularProgressIndicator(),),
+          query: ref,
+          itemBuilder: (context, snapshot, animation, index) {
+            final userId = snapshot.child('userId').value.toString();
+            if (userId != FirebaseAuth.instance.currentUser!.uid) {
+              return const SizedBox();
+            }
+            final id = int.parse(snapshot.child('id').value.toString());
+            return FutureBuilder(
+                future: _getItem(id),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return StoreItemWidget(snapshot.data!);
+                  } else {
+                    return const SizedBox();
+                  }
+                });
+          },
+        )),
+      ),
     );
   }
 

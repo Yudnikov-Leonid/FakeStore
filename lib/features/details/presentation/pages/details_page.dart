@@ -1,4 +1,5 @@
 import 'package:fake_store/features/list/domain/entity/store_item.dart';
+import 'package:fake_store/features/list/presentation/widgets/favorite_button.dart';
 import 'package:flutter/material.dart';
 
 class DetailsPage extends StatefulWidget {
@@ -23,10 +24,16 @@ class _DetailsPageState extends State<DetailsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Image.network(widget._item.imageUrl),
-                Text(
-                  widget._item.title,
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      widget._item.title,
+                      style: const TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    FavoriteButton(widget._item, doRebuild: true,)
+                  ],
                 ),
                 Container(
                   height: 60,
